@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Space Status</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        h1 { color: #333; }
+        .status { font-size: 20px; margin-top: 20px; }
+        .free { color: green; font-weight: bold; }
+        .occupied { color: red; font-weight: bold; }
+        img { width: 700px; margin-top: 20px; border: 2px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>Parking Space Status</h1>
+    <h2 id="free-spaces">Loading...</h2>
+    
+    <img id="parking-image" src="/static/parking_status.jpg" alt="Parking Status">
+
+    <div id="parking-info"></div>
+
+    <script>
+        function fetchData() {
+            fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("free-spaces").innerText = `Free Spaces: ${data.free_spaces} / ${data.total_spaces}`;
+
+                // Update the image with a cache-busting timestamp
+                let imageElement = document.getElementById("parking-image");
+                imageElement.src = data.image_url + "?t=" + new Date().getTime();
+
+                let output = "<h3>Parking Spot Details:</h3>";
+                data.spaces.forEach(space => {
+                    output += `<p class="${space.status.toLowerCase()}">${space.spot} - ${space.status}</p>`;  // Shows "Parking Spot X"
+                });
+
+                document.getElementById("parking-info").innerHTML = output;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        setInterval(fetchData, 2000); // Refresh every 2 seconds
+        fetchData();
+    </script>
+</body>
+</html>
