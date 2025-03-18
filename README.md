@@ -1,4 +1,4 @@
-Car Parking Space Detection System
+Smart-Cars-Parking-Detection
 
 # Project Overview
 
